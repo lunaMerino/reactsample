@@ -24,7 +24,7 @@ jobs:
         steps:
             - name: echo del mensaje
               run: echo "Hello World"
-            - run: sleep 120
+            - run: sleep 30
             - run: ls -a
     
     is_pull_request:
