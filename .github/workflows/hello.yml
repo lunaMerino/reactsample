@@ -19,3 +19,10 @@ jobs:
               run: echo "Hello World"
             - run: sleep 120
             - run: ls -a
+
+    bye:
+        runs-on: ubuntu-22.04
+        needs: hello
+        steps:
+            - name: echo del mensaje
+              run: echo "Bye World"
