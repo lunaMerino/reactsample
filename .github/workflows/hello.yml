@@ -3,6 +3,12 @@ on:
     push:
         branches:
             - main
+    pull_request:
+        types: [ opened, synchronize, reopened, closed ]
+        branches: [master]
+                
+
+
 
 jobs:
     avoid_redundancy:
@@ -12,6 +18,7 @@ jobs:
               uses: styfle/cancel-workflow-action@0.9.1
               with:
                 access_token: ${{ github.token }}
+    
     hello:
         runs-on: ubuntu-22.04
         steps:
@@ -19,6 +26,12 @@ jobs:
               run: echo "Hello World"
             - run: sleep 120
             - run: ls -a
+    
+    is_pull_request:
+        runs-on: ubuntu-22.04
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' 
+        steps:
+            - run: echo "Esto es una pr"
 
     bye:
         runs-on: ubuntu-22.04
