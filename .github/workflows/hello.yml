@@ -24,18 +24,40 @@ jobs:
         steps:
             - name: echo del mensaje
               run: echo "Hello World"
-            - run: sleep 30
+            - name: dime la fecha
+              run: date
             - run: ls -a
-    
-    is_pull_request:
-        runs-on: ubuntu-22.04
-        if: github.event_name == 'pull_request' && github.event.action == 'closed' 
-        steps:
-            - run: echo "Esto es una pr"
 
-    bye:
+    closed_merge_message:
+        runs-on: ubuntu-22.04
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        steps:
+            - name: Echo the message
+              run: echo "Has realizado una PR!"
+    
+    checkout_code:
         runs-on: ubuntu-22.04
         needs: hello
         steps:
+            - uses: actions/checkout@v4
+            
+            - name: Zip artifact for deployment
+              run: zip release.zip ./* -r
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v3
+              with:
+                name: app
+                path: release.zip  
+
+    bye:
+        runs-on: ubuntu-22.04
+        needs: checkout_code
+        steps:
+            - name: Download artifact from build job
+              uses: actions/download-artifact@v3
+              with:
+                name: app
+            - run: ls -a
             - name: echo del mensaje
               run: echo "Bye World"
